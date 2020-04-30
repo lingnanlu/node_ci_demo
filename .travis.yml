@@ -1,7 +1,19 @@
 language: node_js
+
 node_js:
   - 12
+
 script: echo "test"
+
 before_install:
   - openssl aes-256-cbc -K $encrypted_a2f8bae31ff7_key -iv $encrypted_a2f8bae31ff7_iv
   -in id_rsa.enc -out ~/.ssh/id_rsa -d
+
+after_success:
+  - npm prune --production  # 删除devDependencies
+  - tar -jcf app.tar.bz2 *    # 打包并压缩代码
+  - scp app.tar.bz2 root@45.32.125.57:~/project  # 复制到生产服务器上
+  - ssh root@45.32.125.57 'cd ~/project && rm -rf app' 
+  - ssh root@45.32.125.57 'cd ~/project && mkdir -p app && tar -jxf app.tar.bz2 -C app'   # 解压
+  - ssh root@45.32.125.57 'cd ~/project/app && pm2 restart app.js'  # 重启pm2
+  - ssh root@45.32.125.57 'cd ~/project && rm app.tar.bz2'
