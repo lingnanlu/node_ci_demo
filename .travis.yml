@@ -6,8 +6,7 @@ node_js:
 script: echo "test"
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_a2f8bae31ff7_key -iv $encrypted_a2f8bae31ff7_iv
-  -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_a2f8bae31ff7_key -iv $encrypted_a2f8bae31ff7_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
 
 after_success:
   - npm prune --production  # 删除devDependencies
